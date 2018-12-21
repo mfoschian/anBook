@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "sentences",
         indices = {
-                @Index(value = "book_id, sentence_num")
+                @Index(value = { "book_id", "sentence_num" } )
         })
 public class Sentence {
 

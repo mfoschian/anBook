@@ -23,11 +23,25 @@ public interface BookDao {
     @Query("SELECT * FROM books")
     LiveData<List<Book>> getAll();
 
-    @Query("SELECT * FROM books WHERE book_id = :book_id")
+    @Query("SELECT * FROM books WHERE id = :book_id")
     Book getBookSync(String book_id);
 
     @Query("SELECT count(*) FROM sentences WHERE book_id = :book_id")
     int getBookSentencesCount(String book_id);
+
+    @Query("SELECT * FROM books WHERE active = 1 LIMIT 1")
+    Book getActiveSync();
+
+    @Query("SELECT * FROM books WHERE active = 1 LIMIT 1")
+    LiveData<Book> getActive();
+
+    @Query("UPDATE books SET active = 0")
+    void clearActive();
+
+    @Query("UPDATE books SET active = 1 WHERE id = :book_id")
+    void setActive(String book_id);
+
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Book... books);
