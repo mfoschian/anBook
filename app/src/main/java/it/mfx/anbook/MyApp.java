@@ -28,7 +28,7 @@ public class MyApp extends Application {
 
     public final class IntentRequests {
         final public static int BROWSE_FILE_REQUEST = 8000;
-        //final public static int EDIT_ITEM_REQUEST = 8001;
+        final public static int CHOOSE_BOOK = 8001;
         //final public static int SHOP_RUN_REQUEST = 8002;
         //final public static int PERMISSIONS_REQUEST = 8003;
         //final public static int CHOOSE_IMPORT_FILE_REQUEST = 8004;
@@ -228,9 +228,46 @@ public class MyApp extends Application {
         dao.setActive(book_id);
     }
 
+    public void setActiveBook(final String book_id, final MyApp.CallbackSimple cb ) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setActiveBook(book_id);
+                    if (cb != null)
+                        cb.onSuccess();
+                }
+                catch (Exception err) {
+                    if (cb != null)
+                        cb.onError(err);
+                }
+            }
+        });
+    }
+
     public Book getActiveBook() {
         AppDatabase db = db();
         return db.bookDao().getActiveSync();
+    }
+
+    public void getBooks(final Callback<List<Book>> cb) {
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<Book> books = db().bookDao().getAllSync();
+                    if (cb != null)
+                        cb.onSuccess(books);
+                }
+                catch (Exception err) {
+                    if (cb != null)
+                        cb.onError(err);
+                }
+            }
+        });
+
     }
 
     public void getActiveBook(final Callback<Book> cb) {

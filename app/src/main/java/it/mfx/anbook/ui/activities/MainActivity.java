@@ -15,10 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.FileReader;
 import java.io.InputStream;
 
 import it.mfx.anbook.MyApp;
@@ -46,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private BookViewModel viewModel = null;
     private Book activeBook = null;
 
-    private TextView titleBox;
     private TextView answerBox;
+
 
     private boolean bookLoaded() {
         return activeBook != null;
@@ -60,10 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
         app = (MyApp)getApplication();
 
-        titleBox = findViewById(R.id.title_box);
         answerBox = findViewById(R.id.answer_box);
 
         init();
+    }
+
+    private void setAnswer( String s ) {
+        if( answerBox != null )
+            answerBox.setText(s);
+    }
+
+    private void setAnswer( int id ) {
+        if( answerBox != null )
+            answerBox.setText(id);
     }
 
     private void subscribeUI(BookViewModel modelView) {
@@ -88,17 +98,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void render(Book book) {
-        if( titleBox == null || answerBox == null )
-            return;
 
         if( book == null ) {
-            titleBox.setText(R.string.no_books_loaded);
-            answerBox.setText(R.string.tap_for_load_a_book);
+            setTitle(R.string.no_books_loaded);
+            setAnswer(R.string.tap_for_load_a_book);
         }
         else {
-            titleBox.setText(book.title);
-            answerBox.setText(R.string.tap_for_an_answer);
+            setTitle(book.title);
+            setAnswer(R.string.tap_for_an_answer);
         }
     }
 
@@ -107,7 +116,10 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(BookViewModel.class);
 
         subscribeUI(viewModel);
+        loadData();
+    }
 
+    void loadData() {
         app.getActiveBook(new MyApp.Callback<Book>() {
             @Override
             public void onSuccess(Book result) {
@@ -126,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
     private void init_debug() {
         app.addFakeData(new MyApp.Callback<Boolean>() {
             @Override
@@ -145,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void openLibraryMenu() {
+        LibraryActivity.openLibrary(this);
+    }
 
     private void getAnAnswer() {
         if( !bookLoaded() ) {
@@ -160,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     Utils.runOnUIthread(new Utils.UICallback() {
                         @Override
                         public void onUIReady() {
-                            answerBox.setText( answer );
+                            setAnswer( answer );
                         }
                     });
                 }
@@ -174,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadBook() {
-        // TODO
 
         boolean has_permission = requestPermissions( permissions );
         if( ! has_permission )
@@ -251,6 +265,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //return super.onCreateOptionsMenu(menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        //docListMenuItem = menu.findItem(R.id.action_toggle_list);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.library_menu) {
+            openLibraryMenu();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] allowedPermissions, @NonNull int[] grantResults) {
@@ -302,6 +337,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+        }
+        else if (requestCode == MyApp.IntentRequests.CHOOSE_BOOK && resultCode == Activity.RESULT_OK) {
+            String result = LibraryActivity.getExitCode(resultData);
+
+            if( result != null )
+                app.setActiveBook(result, new MyApp.CallbackSimple() {
+                    @Override
+                    public void onSuccess() {
+                        loadData();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
         }
     }
 }
