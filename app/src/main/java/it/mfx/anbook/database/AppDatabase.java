@@ -12,7 +12,7 @@ import java.util.UUID;
 import it.mfx.anbook.models.Book;
 import it.mfx.anbook.models.Sentence;
 
-@Database(entities = {Book.class, Sentence.class }, version = 1)
+@Database(entities = {Book.class, Sentence.class }, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static String dbName = "anbookDB";
@@ -24,9 +24,11 @@ public abstract class AppDatabase extends RoomDatabase {
 
         //Migration M_01_02 = new SimpleMigration(1,2, "CREATE INDEX index_tags_label ON tags(label)");
         //Migration M_02_03 = new SimpleMigration(2,3, "ALTER TABLE tags ADD childs INTEGER NOT NULL DEFAULT 0;");
+        Migration M_01_02 = new SimpleMigration(1,2, "ALTER TABLE books ADD sentences_count INTEGER NOT NULL DEFAULT 0;");
 
         RoomDatabase.Builder<AppDatabase> b = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, dbName);
         AppDatabase db = b
+                .addMigrations( M_01_02 )
                 //.addMigrations( M_01_02, M_02_03 )
                 .fallbackToDestructiveMigration()
                 .build();

@@ -9,7 +9,8 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "books",
         indices = {
-                @Index(value = "active")
+                @Index(value = "active"),
+                @Index(value = "title")
         })
 public class Book {
 
@@ -23,5 +24,6 @@ public class Book {
     //public String url;
     public boolean active = true;
 
+    public int sentences_count = 0;
 }
 

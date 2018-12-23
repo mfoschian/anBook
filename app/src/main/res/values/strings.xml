@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">anBook</string>
+    <string name="app_name">Il Libro delle risposte</string>
+    <string name="no_books_loaded">Nessun libro delle risposte in memoria</string>
+    <string name="tap_for_an_answer">Fai TAP per avere una risposta</string>
+    <string name="tap_for_load_a_book">Fai TAP per caricare un libro</string>
+    <string name="error">Errore</string>
+    <string name="dialog_yes">Sì</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="permissions_required">Mi spiace, ma senza acconsentire a tutti i permessi l\'App non può funzionare</string>
 </resources>
