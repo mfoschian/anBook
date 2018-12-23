@@ -147,16 +147,16 @@ public class MyApp extends Application {
 
                 try {
                     if ("[title]".equals(line.toLowerCase().substring(0, 7))) {
-                        book.title = line.substring(8);
+                        book.title = line.substring(7);
                     }
                     else if ("[id]".equals(line.toLowerCase().substring(0, 4))) {
-                        book.id = line.substring(5);
+                        book.id = line.substring(4);
                     }
                     else if ("[author]".equals(line.toLowerCase().substring(0, 8))) {
-                        book.author = line.substring(9);
+                        book.author = line.substring(8);
                     }
                     else if ("[version]".equals(line.toLowerCase().substring(0, 10))) {
-                        book.version = line.substring(11);
+                        book.version = line.substring(10);
                     }
                     else {
                         // Sentence
@@ -206,6 +206,8 @@ public class MyApp extends Application {
 
             AppDatabase db = db();
 
+            db.bookDao().delete(book);
+            db.sentenceDao().clearBook(book.id);
             db.bookDao().insertAll(book);
             db.sentenceDao().insertAll(sentences);
 

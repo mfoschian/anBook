@@ -41,8 +41,6 @@ public interface BookDao {
     @Query("UPDATE books SET active = 1 WHERE id = :book_id")
     void setActive(String book_id);
 
-
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Book... books);
 

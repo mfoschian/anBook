@@ -22,6 +22,9 @@ public interface SentenceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Sentence> sentences);
 
+    @Query("DELETE FROM sentences WHERE book_id = :book_id")
+    void clearBook(String book_id);
+
     @Update
     void updateAll(Sentence... sentences);
 
